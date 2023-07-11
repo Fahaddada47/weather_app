@@ -16,6 +16,8 @@ class _WeatherAppState extends State<WeatherApp> {
   bool isError = false;
   String location = '';
   String temperature = '';
+  String maxTemperature = '';
+  String minTemperature = '';
   String weatherDescription = '';
   String iconUrl = '';
 
@@ -27,8 +29,9 @@ class _WeatherAppState extends State<WeatherApp> {
 
   Future<void> getLocationWeather() async {
     try {
-      final apiKey = 'YOUR_API_KEY';
-      final url = 'https://api.openweathermap.org/data/2.5/weather?q={Dhaka}&appid=76378c0f9f43ca413805008be75843f5';
+      final apiKey = 'bf56b533a187d60503cbf5bf26c33207';
+      final cityName = 'Dhaka';
+      final url = 'https://api.openweathermap.org/data/2.5/weather?q=$cityName&appid=$apiKey';
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
@@ -37,8 +40,11 @@ class _WeatherAppState extends State<WeatherApp> {
         setState(() {
           location = data['name'];
           temperature = (data['main']['temp'] - 273.15).toStringAsFixed(1);
+          maxTemperature = (data['main']['temp_max'] - 273.15).toStringAsFixed(1);
+          minTemperature = (data['main']['temp_min'] - 273.15).toStringAsFixed(1);
           weatherDescription = data['weather'][0]['description'];
-          iconUrl = 'https://openweathermap.org/img/w/${data['weather'][0]['icon']}.png';
+          String iconCode = data['weather'][0]['icon'];
+          iconUrl = 'https://openweathermap.org/img/w/$iconCode.png';
           isLoading = false;
           isError = false;
         });
@@ -85,6 +91,15 @@ class _WeatherAppState extends State<WeatherApp> {
               Text(
                 '$temperature°C',
                 style: TextStyle(fontSize: 32),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Max: $maxTemperature°C',
+                style: TextStyle(fontSize: 20),
+              ),
+              Text(
+                'Min: $minTemperature°C',
+                style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16),
               Text(
